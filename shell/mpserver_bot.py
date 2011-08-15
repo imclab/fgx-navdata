@@ -19,7 +19,7 @@ def lookup_server(server_name):
 		return addr
 
 	except socket.gaierror as err:
-		print "  ERR=\t" , err		
+		print "  ERR=\t" , server_name, err		
 		return None
 	
 

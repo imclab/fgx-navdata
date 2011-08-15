@@ -65,7 +65,7 @@ for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
 	if address != None:
 		mp_info['servers'][server_name] = {'ip': address, 'last': None}
 		
-		info = get_telnet(address)
+		info = get_telnet(server_name + ".flightgear.org")
 		if info != None:
 			mp_info['servers'][server_name]['info'] = info
 

@@ -19,7 +19,7 @@ def lookup_server(server_name):
 		return addr
 
 	except socket.gaierror as err:
-		print "  ERR=\t" , server_name, err		
+		print "  DNS =\t" , server_name, err		
 		return None
 	
 
@@ -44,7 +44,7 @@ def get_telnet(address):
 				}
 		
 	except 	socket.error as err:
-		#print "err=", err
+		print " telnet=", address, err
 		#conn.close()
 		return None
 		

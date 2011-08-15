@@ -38,8 +38,15 @@ class MainController(BaseController):
 	@jsonify
 	def mp(self, end_point=None):
 		
+		c = MC.get("hit_counter")
+		if c == None:
+			c = 1
+		c += 1
+		MC.set("hit_counter", c)
+		
 		payload = {	'success': True, 
-					'utc' : datetime.datetime.now().strftime(DATE_FORMAT)
+					'utc' : datetime.datetime.now().strftime(DATE_FORMAT),
+					'hit_counter': MC.get("hit_counter")
 				}
 		
 		if end_point == None:

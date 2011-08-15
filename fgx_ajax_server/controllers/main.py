@@ -1,6 +1,6 @@
 
 import logging
-
+import datetime
 
 from pylons import request, response #, session # , tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
@@ -13,7 +13,7 @@ from fgx_ajax_server.model.meta import MC
 log = logging.getLogger(__name__)
 
 
-
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class MainController(BaseController):
 
@@ -36,10 +36,22 @@ class MainController(BaseController):
 		return payload
 		
 	@jsonify
-	def mp_servers(self):
+	def mp(self, end_point=None):
 		
 		payload = {	'success': True, 
-					'mp_servers': MC.get("mp_servers")
+					'utc' : datetime.datetime.now().strftime(DATE_FORMAT)
 				}
+		
+		if end_point == None:
+			payload['end_points'] = ['/info', '/servers']
+			
+		else:
+			
+			mp_info = MC.get("mp_info")
+			if end_point == "info":
+				payload['mp_info']  = mp_info
+					
+			elif end_point == "servers":
+				payload['servers']  = mp_info['servers']
 
 		return payload

@@ -13,8 +13,7 @@ import memcache
 
 MC = memcache.Client(['127.0.0.1:11211'])
 
-
-
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 ## Thread to make it timeout after a few seconds instead of 30 secs ++
 ## http://stackoverflow.com/questions/492519/timeout-on-a-python-function-call
@@ -51,9 +50,10 @@ def lookup_server(server_domain):
 # Max number of servers to look
 MAX_MPSERVER_ADDRESS = 20
 
-print datetime.datetime.now()
-
-mp_servers = {}
+## Payload to store in memcached
+mp_info = {}
+mp_info['last_start'] = datetime.datetime.now().strftime(DATE_FORMAT)
+mp_info['servers'] = {}
 
 for no in range(1, MAX_MPSERVER_ADDRESS + 1):
 	server_name = "mpserver%02d.flightgear.org" % no
@@ -62,39 +62,36 @@ for no in range(1, MAX_MPSERVER_ADDRESS + 1):
 	print "--------------------------------\n", server_name, address
 	
 	if address != None:
-		mp_servers[server_name] = {'ip': address, 'last': None}
+		mp_info['servers'][server_name] = {'ip': address, 'last': None}
 		
 		try:
 			conn = telnetlib.Telnet(server_name, 5001, 5)
 			data = conn.read_all()
 			lines = data.split("\n")
-			print lines[0]
-			print lines[1]
-			print lines[2]
-			print lines[3]
-			print lines[4]
-			mp_servers[server_name]['info'] = {	'info': lines[0],
+			#print lines[0]
+			#print lines[1]
+			#print lines[2]
+			#print lines[3]
+			#print lines[4]
+			mp_info['servers'][server_name]['info'] = {	'info': lines[0],
 												'version': lines[1],
 												'tracked': lines[2],
 												'pilots': lines[3],
 												}
-			mp_servers[server_name]['last'] = time.mktime( datetime.datetime.utcnow().timetuple() )
+			mp_info['servers'][server_name]['last'] = time.mktime( datetime.datetime.utcnow().timetuple() )
+			
 		except 	socket.error as err:
-			print "err=", err
+			#print "err=", err
+			pass
 			
 		
-	"""
-	try:
-		addr = socket.gethostbyname(server_name) #, PORT)
-		print "OK=\t", server_name, addr
+
+mp_info['last_end'] = datetime.datetime.now().strftime(DATE_FORMAT)
+#print datetime.datetime.now()	
+MC.set("mp_info", mp_info)
 
 
-	except socket.gaierror as err:
-		print "ERR=\t" , err
-	"""
-MC.set("mp_servers", mp_servers)
-print datetime.datetime.now()	
-
+print "DONE"
 
 sys.exit(0)
 

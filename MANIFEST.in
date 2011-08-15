@@ -1,0 +1,3 @@
+include fgx_ajax_server/config/deployment.ini_tmpl
+recursive-include fgx_ajax_server/public *
+recursive-include fgx_ajax_server/templates *

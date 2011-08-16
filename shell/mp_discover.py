@@ -1,5 +1,22 @@
 #!/usr/bin/env python
 
+"""
+pete@freeflightsim.org composed and knocked this up script 
+
+Purpose:
+To be on a cron every minute and to update the memcache tree with the mpserver status.
+why? 
+> so one can update the server status into from here memcache 
+> then other apps can query memcache.. and nothing to so with this script
+
+How:
+This script walks thought the domain 1 > shell_vars.MAX_MPSERVER_ADDRESS
+it then chacks if the dns entry exists and its address or Null
+it then connect to each server in telnet to gain latest data or null
+Finally updates the memcache with the "mp_info"
+job done :-)
+"""
+
 import time
 import datetime
 import sys
@@ -9,19 +26,7 @@ import telnetlib
 
 import shell_vars 
 
-"""
-pete@freeflightsim.org Pete knocked this up script 
 
-Purpose:
-To be on a cron every minute and to update the memcache tree with the mpserver status..
-
-How:
-This script walks thought the domain 1 > shellvars.MAX_MPSERVER_ADDRESS
-it then chacks if the dns entry exists and its address
-it then connect to each server in telnet to gain latest data
-Finally updates the memcache with the "mp_info"
-
-"""
 
 
 

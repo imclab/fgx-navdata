@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-pete@freeflightsim.org composed and knocked this up script 
+pete@freeflightsim.org composed and knocked this up script for fgx update of mp
 
 Purpose:
 To be on a cron every minute and to update the memcache tree with the mpserver status.

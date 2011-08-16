@@ -9,6 +9,21 @@ import telnetlib
 
 import shell_vars 
 
+"""
+pete@freeflightsim.org Pete knocked this up script 
+
+Purpose:
+To be on a cron every minute and to update the memcache tree with the mpserver status..
+
+How:
+This script walks thought the domain 1 > shellvars.MAX_MPSERVER_ADDRESS
+it then chacks if the dns entry exists and its address
+it then connect to each server in telnet to gain latest data
+Finally updates the memcache with the "mp_info"
+
+"""
+
+
 
 ## Does a DNS loopkup of a server eg mpserver07
 def lookup_server(server_name):
@@ -45,7 +60,7 @@ def get_telnet(address):
 		
 	except 	socket.error as err:
 		print " telnet=", address, err
-		#conn.close()
+		#conn.close()gr
 		return None
 		
 

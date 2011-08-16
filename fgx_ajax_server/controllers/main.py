@@ -63,4 +63,14 @@ class MainController(BaseController):
 
 		return payload
 		
-		
+
+
+
+"""
+gral queries..
+landcover=> SELECT icao FROM apt_airfield WHERE ST_DWithin((SELECT ST_Transform(wkb_geometry, 900913) FROM apt_airfield WHERE icao LIKE 'LSZH'), ST_Transform(wkb_geometry, 900913), 50000);
+[23:06] * peteffs brb cofee and smoke,,,
+[23:06] <gral> or ...
+[23:06] <gral> landcover=> SELECT icao FROM apt_airfield WHERE ST_DWithin((SELECT ST_Transform(wkb_geometry, 900913) FROM apt_airfield WHERE icao LIKE 'LSZH'), ST_Transform(wkb_geometry, 900913), 50*1000*1.85201);
+
+"""

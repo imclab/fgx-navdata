@@ -27,7 +27,7 @@ import telnetlib
 import shell_vars 
 
 
-
+from pprint import pprint
 
 
 ## Does a DNS loopkup of a server eg mpserver07
@@ -59,8 +59,7 @@ def get_telnet(address):
 		return {'info': lines[0],
 				'version': lines[1],
 				'tracked': lines[2],
-				'pilots': lines[3],
-				'last': datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+				'pilots': lines[3]
 				}
 		
 	except 	socket.error as err:
@@ -71,9 +70,15 @@ def get_telnet(address):
 
 
 ## Payload to store in memcached
-mp_info = {}
+#shell_vars.MC.set("mp_info", None)
+mp_info = shell_vars.MC.get("mp_info")
+
+#print mp_info
+if mp_info == None:
+	mp_info = {}
+	mp_info['servers'] = {}	
+	
 mp_info['last_dns_start'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
-mp_info['servers'] = {}
 
 ## Loop range and lookup servers
 for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
@@ -83,12 +88,15 @@ for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
 	print "--------------------------------\n", server_name, address
 	
 	if address != None:
-		mp_info['servers'][server_name] = {'ip': address, 'last': None}
+		if not mp_info['servers'].has_key(server_name):
+			mp_info['servers'][server_name] = {'ip': address, 'last': None, 'info': None, 'fail': None}
 		
 		info = get_telnet(address) # server_name + ".flightgear.org")
 		if info != None:
 			mp_info['servers'][server_name]['info'] = info
-
+			mp_info['servers'][server_name]['last'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+		else:
+			mp_info['servers'][server_name]['fail'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
 		
 
 mp_info['last_dns_end'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
@@ -96,8 +104,9 @@ mp_info['last_dns_end'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMA
 ## Update Memcached
 shell_vars.MC.set("mp_info", mp_info)
 
-print "DONE", mp_info
+#print "DONE", mp_info
+pprint(mp_info)
 
 sys.exit(0)
 
-		
+

@@ -56,10 +56,25 @@ def get_telnet(address):
 		#print lines[2]
 		#print lines[3]
 		#print lines[4]
+		tracked = "@ Not Tracked"
+		if lines[2].find("tracked") != -1:
+			tracked = lines[2]
+			
+		if lines[3].find("tracked") != -1:
+			tracked = lines[3]
+			
+			
+		pilots = "@ No Pilots"
+		if lines[2].find("pilots") != -1:
+			pilots = lines[2]
+			
+		if lines[3].find("pilots") != -1:
+			pilots = lines[3]
+		
 		return {'info': lines[0],
 				'version': lines[1],
-				'tracked': lines[2],
-				'pilots': lines[3]
+				'tracked': tracked,
+				'pilots': pilots
 				}
 		
 	except 	socket.error as err:
@@ -95,8 +110,11 @@ for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
 		if info != None:
 			mp_info['servers'][server_name]['info'] = info
 			mp_info['servers'][server_name]['last'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+			mp_info['servers'][server_name]['fail'] = None # cancel a fail message
 		else:
-			mp_info['servers'][server_name]['fail'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+			if mp_info['servers'][server_name]['fail'] == None:
+				## we only want the first fail
+				mp_info['servers'][server_name]['fail'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
 		
 
 mp_info['last_dns_end'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)

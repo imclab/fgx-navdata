@@ -83,6 +83,8 @@ def get_telnet(address):
 		return None
 		
 
+def current_date_utc():
+	return datetime.datetime.utcnow().strftime(shell_vars.DATE_FORMAT)
 
 ## Payload to store in memcached
 #shell_vars.MC.set("mp_info", None)
@@ -93,7 +95,7 @@ if mp_info == None:
 	mp_info = {}
 	mp_info['servers'] = {}	
 	
-mp_info['last_dns_start'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+mp_info['last_dns_start'] = current_date_utc()
 
 ## Loop range and lookup servers
 for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
@@ -109,15 +111,15 @@ for no in range(1, shell_vars.MAX_MPSERVER_ADDRESS + 1):
 		info = get_telnet(address) # server_name + ".flightgear.org")
 		if info != None:
 			mp_info['servers'][server_name]['info'] = info
-			mp_info['servers'][server_name]['last'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+			mp_info['servers'][server_name]['last'] = current_date_utc()
 			mp_info['servers'][server_name]['fail'] = None # cancel a fail message
 		else:
 			if mp_info['servers'][server_name]['fail'] == None:
 				## we only want the first fail
-				mp_info['servers'][server_name]['fail'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+				mp_info['servers'][server_name]['fail'] = current_date_utc()
 		
 
-mp_info['last_dns_end'] = datetime.datetime.now().strftime(shell_vars.DATE_FORMAT)
+mp_info['last_dns_end'] = current_date_utc()
 
 ## Update Memcached
 shell_vars.MC.set("mp_info", mp_info)

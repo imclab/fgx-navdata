@@ -14,3 +14,6 @@ Session = scoped_session(sessionmaker())
 # names, you'll need a metadata for each database
 metadata = MetaData()
 
+db = None
+
+

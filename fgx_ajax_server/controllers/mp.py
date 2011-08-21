@@ -50,6 +50,7 @@ class MainController(BaseController):
 				}
 		
 		if end_point == None:
+			"""No end point so send list of end points """
 			payload['end_points'] = ['/info', '/servers']
 			
 		else:

@@ -15,7 +15,8 @@ from fgx_ajax_server.model.meta import Session
 
 from fgx_ajax_server.model import Apt, RunwayThreshold, Ils
 
-log = logging.getLogger(__name__)
+#log = logging.getLogger(__name__)
+
 
 
 class AirportController(BaseController):
@@ -50,12 +51,31 @@ class AirportController(BaseController):
 			
 		else:
 			data = {'airport': [airport.dic()]}
-			runwayObs = Session.query(RunwayThreshold).filter_by(apt_icao=code).all()
-			ilsObs = Session.query(Ils).filter_by(apt_icao=code).all()
+			runwayObs = Session.query(RunwayThreshold).filter_by(apt_icao=code).order_by(RunwayThreshold.rwy_num).all()
+			ilsObs = Session.query(Ils).filter_by(apt_icao=code).order_by(Ils.rwy_num).all()
+			
+			## walk thru runways and stick in a dit, along with ils
+			runways_dic = {}
+			runway_ends = []
+			for runway in runwayObs:
+				rwy_num = runway.rwy_num.strip()
+				runways_dic[rwy_num] = runway.dic()
+				runways_dic[rwy_num]['ils'] = None
+				for ils in ilsObs:
+					if rwy_num == ils.rwy_num:
+						runways_dic[rwy_num] = ils.dic()
+				rev_rwy = self.reverse_rwy(runway.rwy_num)
+				print rwy_num, rev_rwy
+				if not rev_rwy in runways_dic:
+					runway_ends.append( (rwy_num, rev_rwy) )
+			print runway_ends
+				
+				
 			if len(runwayObs) > 0:
 				runways = []
 				for runway in runwayObs:
 					dic = runway.dic()
+					print runway.rwy_num, self.reverse_rwy(runway.rwy_num)
 					dic['ils'] = None
 					for ils in ilsObs:
 						if ils.rwy_num == ils.rwy_num:
@@ -71,40 +91,30 @@ class AirportController(BaseController):
 		
 		
 	def reverse_rwy(self, rwy_num):
-		pass
-		"""
-		my($num, $lr) = ($rwy_num =~ /(\d+)(.*)/);
+		rwy_str = rwy_num
+		parts = re.compile("(\d+)(.*)").split(rwy_str, maxsplit=0)
+		print rwy_str, len(rwy_str), parts
+		num = int(parts[1])
+		lr = parts[2]
+		
+		#if(!$num)
+		#{
+		#	return ${rwy_num};
+		#}
+		
+		if num > 18:
+			num = num - 18
+		else:
+			num += num + 18
 
-		if(!$num)
-		{
-			return ${rwy_num};
-		}
+		if lr != "":		
+			if lr.upper() == "L":
+				lr = "R"
+			else:
+				lr = "L"
+		
+		return "%s%s" % (num, lr)
 
-		if($num > 18)
-		{
-			$num -= 18;
-		}
-		else
-		{
-			$num += 18;
-		}
-
-		if($lr ne "")
-		{
-			if(uc($lr) eq "L")
-			{
-				$lr = "R";
-			}
-			else
-			{
-				$lr = "L";
-			}
-		}
-
-		return "${num}${lr}";
-		}
-
-		"""
 
 """
 gral queries..

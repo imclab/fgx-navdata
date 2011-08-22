@@ -60,9 +60,9 @@ class Ils(object):
 	
 	def dic(self):
 		return {'ogc_fid': self.ogc_fid,
-				'navaid_id': self.navaid_id,
+				'navaid_id': self.navaid_id.strip(),
 				'apt_icao': self.apt_icao.strip(),
-				'rwy_num': self.rwy_num,
+				'rwy_num': self.rwy_num.strip(),
 				'freq_mhz': str(self.freq_mhz),
 				'true_heading_deg': str(self.true_heading_deg),
 				'range_km': str(self.range_km),
@@ -70,6 +70,8 @@ class Ils(object):
 				'elevation_m': str(self.elevation_m)
 		}
 orm.mapper(Ils, t_ils)   
+    
+    
     
 ##=================================================================
 ## RunwayThreshold
@@ -101,7 +103,7 @@ class RunwayThreshold(object):
 	def dic(self):
 		return {'ogc_fid': self.ogc_fid,
 				'apt_icao': self.apt_icao.strip(),
-				'rwy_num': self.rwy_num,
+				'rwy_num': self.rwy_num.strip(),
 				'length_m': self.length_m,
 				'width_m': str(self.width_m),
 				'true_heading_deg': str(self.true_heading_deg)

@@ -27,3 +27,6 @@ def to_dic(obj):
 	
 	
 	return ret
+	
+def make_payload():
+	pass

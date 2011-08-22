@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-class MainController(BaseController):
+class MpController(BaseController):
 
 
 	##================================================================
@@ -23,48 +23,33 @@ class MainController(BaseController):
 	@jsonify
 	def index(self):
 
-		c = MC.get("hit_counter")
-		if c == None:
-			c = 1
-		c += 1
-		MC.set("hit_counter", c)
-		
-		MC.set("TEST", {'this': 'foo', 'x': True})
-
-		payload = {'success': True, 'c': c,  'T': MC.get("TEST")}
+		payload = {'success': True, 'endpoints': ['servers','flights']}
 
 		return payload
 		
 	@jsonify
-	def mp(self, end_point=None):
+	def flights(self, end_point=None):
 		
-		c = MC.get("hit_counter")
-		if c == None:
-			c = 1
-		c += 1
-		MC.set("hit_counter", c)
+		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(DATE_FORMAT)}
 		
-		payload = {	'success': True, 
-					'utc' : datetime.datetime.now().strftime(DATE_FORMAT),
-					'hit_counter': MC.get("hit_counter")
-				}
-		
-		if end_point == None:
-			"""No end point so send list of end points """
-			payload['end_points'] = ['/info', '/servers']
-			
+		flights = MC.get("mp_flights")
+		if flights:
+			payload['flights']  = flights
 		else:
-			
-			mp_info = MC.get("mp_info")
-			if end_point == "info":
-				payload['mp_info']  = mp_info
-					
-			elif end_point == "servers":
-				payload['servers']  = mp_info['servers']
-
+			payload['flights'] = []
 		return payload
 		
-
+	@jsonify
+	def servers(self, end_point=None):
+		
+		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(DATE_FORMAT)}
+		
+		servers = MC.get("mp_servers")
+		if servers:
+			payload['servers']  = servers
+		else:
+			payload['servers'] = []
+		return payload
 
 
 """

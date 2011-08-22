@@ -35,7 +35,7 @@ class Apt(object):
 				'apt_name': self.apt_name.strip(),
 				'elevation_m': str(self.elevation_m),
 				'has_tower': bool(self.has_tower),
-				'tower_name': self.tower_name.strip(),
+				'tower_name': '' if self.tower_name == None else self.tower_name.strip(),
 				'hgt_tower_m': str(self.hgt_tower_m)
 		}
 orm.mapper(Apt, t_apt)

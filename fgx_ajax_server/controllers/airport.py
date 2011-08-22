@@ -24,11 +24,16 @@ class AirportController(BaseController):
 	##================================================================
 	
 	@jsonify
-	def index(self):
+	def search(self):
 
-		
 		payload = {'success': True}
-
+		
+		if 'search' in request.params:
+			search = request.params['search'].strip().upper()
+			like = "%" + search + "%"
+			airports = Session.query(Apt).filter( Apt.apt_icao.like(like) ).all()
+			payload['airports'] = [a.dic() for a in airports]
+			
 		return payload
 		
 	@jsonify

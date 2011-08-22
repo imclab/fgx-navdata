@@ -42,6 +42,36 @@ class Apt(object):
 orm.mapper(Apt, t_apt)
 
 ##=================================================================
+## Ils
+t_ils =  Table('ils', metadata,
+    Column(u'ogc_fid', INTEGER(), primary_key=True, nullable=False),
+	Column(u'wkb_geometry', String(length=255)),
+	Column(u'navaid_id', CHAR(length=4, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'apt_icao', CHAR(length=4, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'rwy_num', CHAR(length=3, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'subtype', CHAR(length=10, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'elevation_m', NUMERIC(precision=8, scale=2, asdecimal=True)),
+	Column(u'freq_mhz', NUMERIC(precision=7, scale=3, asdecimal=True)),
+	Column(u'range_km', NUMERIC(precision=7, scale=3, asdecimal=True)),
+	Column(u'true_heading_deg', NUMERIC(precision=6, scale=2, asdecimal=True)),
+)
+
+class Ils(object):
+	
+	def dic(self):
+		return {'ogc_fid': self.ogc_fid,
+				'navaid_id': self.navaid_id,
+				'apt_icao': self.apt_icao.strip(),
+				'rwy_num': self.rwy_num,
+				'freq_mhz': str(self.freq_mhz),
+				'true_heading_deg': str(self.true_heading_deg),
+				'range_km': str(self.range_km),
+				'subtype': self.subtype,
+				'elevation_m': str(self.elevation_m)
+		}
+orm.mapper(Ils, t_ils)   
+    
+##=================================================================
 ## RunwayThreshold
 t_runway_threhold =  Table('runwaythreshold', metadata,
     Column(u'ogc_fid', INTEGER(), primary_key=True, nullable=False),

@@ -5,7 +5,7 @@ from fgx_ajax_server.model.meta import  Session, metadata
 #import sqlalchemy as sa
 #from sqlalchemy.ext.sqlsoup import SqlSoup
 from sqlalchemy import orm, Table, Column
-from sqlalchemy import Boolean, SmallInteger, INTEGER, NUMERIC, Float, Text, CHAR, DateTime, Date
+from sqlalchemy import Boolean, SmallInteger, INTEGER, NUMERIC, Float, Text, CHAR, String, DateTime, Date
 
 
 def init_model(engine):
@@ -15,7 +15,8 @@ def init_model(engine):
 	#meta.db = SqlSoup(engine)
 
 	
-
+##=================================================================
+## Airport
 t_apt =  Table('apt', metadata,
     Column(u'ogc_fid', INTEGER(), primary_key=True, nullable=False),
 	Column(u'wkb_geometry', CHAR()),
@@ -39,3 +40,40 @@ class Apt(object):
 				'hgt_tower_m': str(self.hgt_tower_m)
 		}
 orm.mapper(Apt, t_apt)
+
+##=================================================================
+## RunwayThreshold
+t_runway_threhold =  Table('runwaythreshold', metadata,
+    Column(u'ogc_fid', INTEGER(), primary_key=True, nullable=False),
+	Column(u'wkb_geometry', String(length=255), primary_key=False),
+	Column(u'apt_icao', CHAR(length=4, convert_unicode=False, assert_unicode=None, unicode_error=None), primary_key=False),
+	Column(u'rwy_num', CHAR(length=3, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'width_m', Float(precision=53, asdecimal=False), primary_key=False),
+	Column(u'surface', CHAR(length=11, convert_unicode=False, assert_unicode=None, unicode_error=None )),
+	Column(u'shoulder', CHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None )),
+	Column(u'smoothness', NUMERIC(precision=4, scale=2, asdecimal=True), primary_key=False),
+	Column(u'centerline_lights', NUMERIC(precision=1, scale=0, asdecimal=True), primary_key=False),
+	Column(u'edge_lighting', CHAR(length=4, convert_unicode=False, assert_unicode=None, unicode_error=None)),
+	Column(u'distance_remaining_signs', NUMERIC(precision=1, scale=0, asdecimal=True)),
+	Column(u'displaced_threshold_m', Float(precision=53, asdecimal=False)),
+	Column(u'is_displaced', NUMERIC(precision=1, scale=0, asdecimal=True)),
+	Column(u'stopway_length_m', Float(precision=53, asdecimal=False)),
+	Column(u'markings', CHAR(length=22, convert_unicode=False, assert_unicode=None, unicode_error=None, )),
+	Column(u'approach_lighting', CHAR(length=26, convert_unicode=False, assert_unicode=None, unicode_error=None, )),
+	Column(u'touchdown_lights', NUMERIC(precision=1, scale=0, asdecimal=True), primary_key=False),
+	Column(u'reil', CHAR(length=16, convert_unicode=False, assert_unicode=None, unicode_error=None, )),
+	Column(u'length_m', Float(precision=53, asdecimal=False)),
+	Column(u'true_heading_deg', NUMERIC(precision=6, scale=2, asdecimal=True)),    
+)
+
+class RunwayThreshold(object):
+	
+	def dic(self):
+		return {'ogc_fid': self.ogc_fid,
+				'apt_icao': self.apt_icao.strip(),
+				'rwy_num': self.rwy_num,
+				'length_m': self.length_m,
+				'width_m': str(self.width_m),
+				'true_heading_deg': str(self.true_heading_deg)
+		}
+orm.mapper(RunwayThreshold, t_runway_threhold)

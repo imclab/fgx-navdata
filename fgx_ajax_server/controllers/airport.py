@@ -12,10 +12,9 @@ from fgx_ajax_server.lib import helpers as h
 from fgx_ajax_server.model.meta import MC
 from fgx_ajax_server.model.meta import Session
 
-from fgx_ajax_server.model import Apt
+from fgx_ajax_server.model import Apt, RunwayThreshold
 
 log = logging.getLogger(__name__)
-
 
 
 class AirportController(BaseController):
@@ -41,19 +40,20 @@ class AirportController(BaseController):
 		
 		payload = {	'success': True}
 		airport = Session.query(Apt).filter_by(apt_icao=code).first()
+		
 		if airport == None:
 			payload['airport'] = None
 			payload['app_error'] = "Airport '%s' not found" % code
+			
 		else:
 			payload['airport'] = [airport.dic()]	
+			runways = Session.query(RunwayThreshold).filter_by(apt_icao=code).all()
+			print runways
+			if len(runways) > 0:
+				payload['runways'] = [r.dic() for r in runways]
 		
 		return payload
 		
-		
-		
-		
-		
-		return payload
 		
 
 

@@ -1,6 +1,10 @@
 
 import logging
 import datetime
+try:
+	import django.utils.simplejson as json
+except:
+	import json
 
 from pylons import request, response #, session # , tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
@@ -12,8 +16,8 @@ from fgx_ajax_server.model.meta import MC
 
 log = logging.getLogger(__name__)
 
+from fgx_ajax_server.config import xconf
 
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class MpController(BaseController):
 
@@ -30,11 +34,11 @@ class MpController(BaseController):
 	@jsonify
 	def flights(self, end_point=None):
 		
-		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(DATE_FORMAT)}
+		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(xconf.DATE_FORMAT)}
 		
 		flights = MC.get("mp_flights")
 		if flights:
-			payload['flights']  = flights
+			payload['flights']  = json.loads(flights)
 		else:
 			payload['flights'] = []
 		return payload
@@ -42,11 +46,11 @@ class MpController(BaseController):
 	@jsonify
 	def servers(self, end_point=None):
 		
-		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(DATE_FORMAT)}
+		payload = {	'success': True, 'utc' : datetime.datetime.now().strftime(xconf.DATE_FORMAT)}
 		
 		servers = MC.get("mp_servers")
 		if servers:
-			payload['servers']  = servers
+			payload['servers']  = json.loads(servers)
 		else:
 			payload['servers'] = []
 		return payload

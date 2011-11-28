@@ -52,7 +52,6 @@ def run():
 				rwyOb.length_m = h.feet_to_metres(row[3])
 				rwyOb.width_m = h.feet_to_metres(row[4])
 				
-				
 				meta.Session.commit()
 				
 

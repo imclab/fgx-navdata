@@ -1,1 +1,2 @@
+shell
 fgx_ajax_server

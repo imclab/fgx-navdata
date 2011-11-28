@@ -20,8 +20,12 @@ args = parser.parse_args()
 
 """
 
-from imports.ourairports import process_runways
+if 1 == 0:
+	import imports.ourairports.process_runways
+	imports.ourairports.process_runways.run()
 
-process_runways.run()
+import imports.terrasync.process_runways
+imports.terrasync.process_runways.run()
+
 
 

@@ -21,7 +21,7 @@ conf = appconfig('config:' + ini)
 load_environment( conf.global_conf, conf.local_conf)
 
 
-
+icao_only = True
 
 #from pylons import config
 

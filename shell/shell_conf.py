@@ -5,6 +5,7 @@ import sys
 from paste.deploy import appconfig
 from pylons import config
 
+
 parent_path = os.path.abspath( os.path.join(os.path.dirname(__file__), "../") )
 sys.path.append(parent_path + "/")  
 
@@ -23,14 +24,19 @@ load_environment( conf.global_conf, conf.local_conf)
 
 
 #from pylons import config
-"""
-print config
 
-TEMP_DIR = config['TEMP_DIR']
+
+
+def temp_dir():
+	return conf['TEMP_DIR']
+	
+#TEMP_DIR = config['TEMP_DIR']
+#print conf.keys()
+#print config['pylons.environ_config']
 
 
 def temp_file( file_name):
-	return open( + file_name, "r")
+	return open( temp_dir() + file_name, "r")
 	
 def data_file(file_name):
 	
@@ -39,4 +45,3 @@ def data_file(file_name):
 		return None
 	
 	return open(file_path, "r")
-"""	

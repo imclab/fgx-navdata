@@ -20,4 +20,8 @@ args = parser.parse_args()
 
 """
 
-import imports.ourairports 
+from imports.ourairports import process_runways
+
+process_runways.run()
+
+

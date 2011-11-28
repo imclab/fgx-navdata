@@ -1,6 +1,7 @@
 """SQLAlchemy Metadata and Session object"""
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 import memcache
 MC = memcache.Client(['127.0.0.1:11211'])
@@ -16,4 +17,5 @@ metadata = MetaData()
 
 db = None
 
-
+# Assign the same metadata object we created earlier.
+Base = declarative_base(metadata=metadata)

@@ -108,6 +108,8 @@ class AirportController(BaseController):
 		return str("%02d%s" % (rnum, lr)).strip()
 
 
+
+
 """
 gral queries..
 landcover=> SELECT icao FROM apt_airfield WHERE ST_DWithin((SELECT ST_Transform(wkb_geometry, 900913) FROM apt_airfield WHERE icao LIKE 'LSZH'), ST_Transform(wkb_geometry, 900913), 50000);

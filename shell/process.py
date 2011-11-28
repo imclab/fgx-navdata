@@ -24,8 +24,11 @@ if 1 == 0:
 	import imports.ourairports.process_runways
 	imports.ourairports.process_runways.run()
 
-import imports.terrasync.process_runways
-imports.terrasync.process_runways.run()
+if 1 == 0:
+	import imports.terrasync.process_runways
+	imports.terrasync.process_runways.run()
 
-
+if 1 == 1:
+	import imports.xplane850.process_airports
+	imports.xplane850.process_airports.run()
 

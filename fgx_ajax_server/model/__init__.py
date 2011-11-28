@@ -131,10 +131,10 @@ class Runway(Base):
 	airport_code = Column(String(length=5), nullable=False)
 	runway = Column( String(length=20), nullable=False)
 	
-	length_m = Column( Numeric(precision=6, scale=2, asdecimal=True))
-	length_ft = Column( Numeric(precision=6, scale=2, asdecimal=True))
-	width_m = Column( Numeric(precision=6, scale=2, asdecimal=True))
-	width_ft = Column( Numeric(precision=6, scale=2, asdecimal=True))
+	length_m = Column( Numeric(precision=8, scale=2, asdecimal=True))
+	length_ft = Column( Numeric(precision=8, scale=2, asdecimal=True))
+	width_m = Column( Numeric(precision=8, scale=2, asdecimal=True))
+	width_ft = Column( Numeric(precision=8, scale=2, asdecimal=True))
 	
 	surface = Column( String(length=11 ))
 	#shoulder = Column(u'shoulder', CHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None )),
@@ -219,13 +219,14 @@ class Threshold(Base):
 		
 	threshold_id = Column( Integer(), primary_key=True, nullable=False)
 	#Column(u'wkb_geometry', String(length=255), primary_key=False),
-	airport_code = Column( String(length=4), nullable=False)
-	threshold = Column(String(length=3), nullable=False)
+	airport_code = Column( String(length=10), nullable=False)
+	threshold = Column(String(length=5), nullable=False)
 	
-	lat = Column(String(length=11))
-	lon = Column(String(length=11))
+	lat = Column(String(length=11), nullable=True)
+	lon = Column(String(length=11), nullable=True)
 	
-	elevation_m =  Column( Numeric(precision=6, scale=2, asdecimal=True))
+	elevation_m =  Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
+	elevation_ft =  Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
 	#Column(u'shoulder', CHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None )),
 	#Column(u'smoothness', NUMERIC(precision=4, scale=2, asdecimal=True)),
 	#Column(u'centerline_lights', NUMERIC(precision=1, scale=0, asdecimal=True)),

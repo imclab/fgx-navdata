@@ -22,9 +22,19 @@ and return the data in a reliable and usefule form, primarily json.
 
 At this stage of the game, this is experimntal code to test the concept.
 
+
+==== Snags and Problems ====
+* Same Origin Policy
+
+The same origins policy is a problem as a request can only be replied to the source domain,
+eg visiting foo.fgx.ch, and making an ajax call to bar.fgx.ch/xyz
+
+
+
 --Contents
 * dev_docs/ - is dev odumentation and spec WIP
 * pylons/ - is a legacy (already) ap with some queries left and other bits to extract
+
 
 
 ==== Development ====

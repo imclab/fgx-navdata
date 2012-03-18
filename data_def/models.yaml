@@ -1,0 +1,10 @@
+
+
+models:
+    
+    -   name: mpserver
+        description: Representation of an mpserver
+        fields: [host, ip, server_status, last_poll, connected, lag]
+                
+
+    

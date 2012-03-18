@@ -1,35 +1,33 @@
-
-This is an idea at consolidating the DATA.
-
-umm
-
-Issues:
-Runway Types:
-
+______ _____       ______      _          _____                          
+|  ___|  __ \      |  _  \    | |        /  ___|                         
+| |_  | |  \/_  __ | | | |__ _| |_ __ _  \ `--.  ___ _ ____   _____ _ __ 
+|  _| | | __\ \/ / | | | / _` | __/ _` |  `--. \/ _ \ '__\ \ / / _ \ '__|
+| |   | |_\ \>  <  | |/ / (_| | || (_| | /\__/ /  __/ |   \ V /  __/ |   
+\_|    \____/_/\_\ |___/ \__,_|\__\__,_| \____/ \___|_|    \_/ \___|_|   
 
 
+The intention of this site is to do all the "data calls" and return in various formats.
 
 
+==== Introduction ====
+If your building a web service for FlightGear, then you will need to do all sorts
+of tricks to aqquire data such as:
+
+* Nav Data: finding fixes, ILS, airport search etc
+* Multiplayers Online - making a remote telnet call peroidically
+* Metars - fetching metars from various sources
+
+So this site is intended to consolidate all these services together, 
+and return the data in a reliable and usefule form, primarily json. 
+
+At this stage of the game, this is experimntal code to test the concept.
+
+--Contents
+* dev_docs/ - is dev odumentation and spec WIP
+* pylons/ - is a legacy (already) ap with some queries left and other bits to extract
 
 
+==== Development ====
 
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-This file is for you to describe the fgx_ajax_server application. Typically
-you would include information such as the information below:
+Design idea is in the dev_docs
 
-Installation and Setup
-======================
-
-Install ``fgx_ajax_server`` using easy_install::
-
-    easy_install fgx_ajax_server
-
-Make a config file as follows::
-
-    paster make-config fgx_ajax_server config.ini
-
-Tweak the config file as appropriate and then setup the application::
-
-    paster setup-app config.ini
-
-Then you are ready to go.

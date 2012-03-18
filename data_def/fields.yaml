@@ -1,0 +1,22 @@
+
+fields:
+
+
+    -   field: aero
+        type: text
+        description: An aircraft model
+        status: rfc
+
+
+    -   field: dlat
+        type: float/decimal ?
+        description: Latitude position in decimal degrees
+        status: rfc
+
+    -   field: callsign
+        type: text
+        description: Callsign of a flight
+        status: rfc
+
+
+

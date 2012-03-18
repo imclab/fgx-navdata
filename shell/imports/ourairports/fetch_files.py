@@ -15,22 +15,22 @@ import os
 from email.utils import parsedate_tz
 from urllib2 import Request, urlopen, URLError
 
-## Init Config
-sys.path.append(os.path.join(os.path.dirname(__file__), "../"))  
-from config import conf
-config = conf.load()
-#print config
 
+import shell_conf
+import utils.helpers as h
 
 base_url = "http://www.ourairports.com/data/"
-files= ["airports.csv"]
+#files= ["airports.csv"]
+files = ["countries.csv", "regions.csv"]
 
 print "---------------------------------"
 print "OurAirports.com - Fetching Files"
-print ""
-for f in files:
+print "---------------------------------"
+
+
+for file_name in files:
 	
-	url = base_url + f
+	url = base_url + file_name
 	print ">> Fetching: " + url
 	req = Request(url)
 	try:
@@ -49,7 +49,7 @@ for f in files:
 		print parsedate_tz(response.info()['Last-Modified'])
 
 		print "#" + response.info()['Last-Modified']
-		target_file = config.temp_dir + f
+		target_file = h.temp_file("ourairports", file_name)
 		if 1 == 0:
 			f = open(target_file, "w")
 			f.write(response.read())

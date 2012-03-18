@@ -4,9 +4,9 @@
 from fgx_ajax_server.model.meta import  Session, metadata, Base
 #import sqlalchemy as sa
 #from sqlalchemy.ext.sqlsoup import SqlSoup
-from sqlalchemy import orm, Table, Column, Index
+from sqlalchemy import orm, Table, Column, Index, ForeignKey
 from sqlalchemy import Boolean, SmallInteger, Integer, Numeric, Text, String, DateTime, Date
-
+#from sqlalchemy.orm import relationship, backref
 
 def init_model(engine):
 	
@@ -34,7 +34,14 @@ def init_model(engine):
 		self.iso_country = None
 		self.iso_region = None
 """
+
+class AirportTypes(Base):
+	__tablename__ = "airport_types"
 	
+	airport_type_id = Column(Integer(), primary_key=True, nullable=False)
+	airport_type = Column(String(length=50), nullable=False)
+
+
 ##=================================================================
 ## Airport
 """
@@ -52,19 +59,34 @@ t_airports =  Table('airports', metadata,
 	#Column(u'hgt_tower_m', NUMERIC(precision=8, scale=2, asdecimal=True)),
 	#Column(u'tower_name', CHAR(length=32, convert_unicode=False, assert_unicode=None, unicode_error=None))
 )
-
-class Airport(object):
-	def dic(self):
-		return {'source': self.aource,
-				'apt_icao': self.apt_icao.strip(),
-				'apt_name': self.apt_name.strip(),
-				'elevation_m': str(self.elevation_m),
-				'has_tower': bool(self.has_tower),
-				'tower_name': '' if self.tower_name == None else self.tower_name.strip(),
-				'hgt_tower_m': str(self.hgt_tower_m)
-		}
-orm.mapper(Airport, t_airports)
 """
+class Airport(Base):
+	__tablename__ = "airports"
+	
+	airport_id = Column(Integer(), primary_key=True, nullable=False)
+	source = Column(String(length=50), nullable=False)
+	
+	airport_code = Column(String(length=6), nullable=False)
+	iata_code = Column(String(length=4), nullable=True)
+	airport = Column(String(length=50), nullable=False)
+	type = Column(String(length=50), nullable=False)
+	
+	elevation_m = Column( Numeric(precision=8, scale=2, asdecimal=True))
+	elevation_ft = Column( Numeric(precision=8, scale=2, asdecimal=True))
+	lat = Column( String(length=11), nullable=True)
+	lon = Column( String(length=11), nullable=True)
+
+	def dic(self):
+		return {'source': self.source,
+				'airport_code': self.airport_code,
+				'airport': self.airport,
+				'elevation_m': str(self.elevation_m),
+				'elevation_ft': str(self.elevation_ft),
+				'lat': self.lat,
+				'lon': self.lon
+		}
+#orm.mapper(Airport, t_airports)
+
 ##=================================================================
 ## Ils
 """
@@ -122,6 +144,28 @@ t_runways =  Table('runways', metadata,
 	#Column(u'true_heading_deg', NUMERIC(precision=6, scale=2, asdecimal=True)),    
 )
 """
+class RunwaySurfaces(Base):
+	__tablename__ = "runway_surfaces"
+	
+	surface_id = Column(Integer(), primary_key=True, nullable=False)
+	surface = Column( String(length=50), nullable=False)
+	
+	def dic(self):
+		return {'surface_id': self.surface_id,
+				'surface': self.surface
+		}
+	
+	@staticmethod
+	def reverse_lookup():
+		dic = {}
+		for ob in meta.Session.query(RunwaySurfaces).all():
+			dic[ob.surface] = ob.surface_id
+		return dic
+		
+Index('runway_surfaces_idx', RunwaySurfaces.surface_id, RunwaySurfaces.surface)
+
+
+
 class Runway(Base):
 	__tablename__ = "runways"
 	
@@ -136,7 +180,10 @@ class Runway(Base):
 	width_m = Column( Numeric(precision=8, scale=2, asdecimal=True))
 	width_ft = Column( Numeric(precision=8, scale=2, asdecimal=True))
 	
-	surface = Column( String(length=11 ))
+	#surface_id = Column( String(length=11 ))
+	#surface_id = relationship("RunwaySurfaces", backref=backref('surface_id', order_by=runway_id))
+	surface_id = Column(Integer, ForeignKey('runway_surfaces.surface_id'))
+	
 	#shoulder = Column(u'shoulder', CHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None )),
 	#smoothness = Column(u'smoothness', NUMERIC(precision=4, scale=2, asdecimal=True)),
 	#centerline_lights = Column(u'centerline_lights', NUMERIC(precision=1, scale=0, asdecimal=True)),
@@ -154,14 +201,16 @@ class Runway(Base):
 		return "<Runway %s - %s >" % (self.airport_code, self.runway)
 	
 	def dic(self):
-		return {'ogc_fid': self.ogc_fid,
-				'apt_icao': self.apt_icao.strip(),
-				'rwy_num': self.rwy_num.strip(),
-				'length_m': self.length_m,
-				'width_m': str(self.width_m),
-				'true_heading_deg': str(self.true_heading_deg)
+		return {'runway_id': self.runway_id,
+				'source': self.source,
+				'airport_code': self.airport_code,
+				'runway': self.runway,
+				'length_m': str(self.length_m),
+				'length_ft': str(self.length_ft),
+				'width_m': str(self.width_m), 
+				'width_ft': str(self.width_ft)
 		}
-
+Index('runway_idx', Runway.source, Runway.airport_code, Runway.runway)
 
 
 """
@@ -219,6 +268,8 @@ class Threshold(Base):
 		
 	threshold_id = Column( Integer(), primary_key=True, nullable=False)
 	#Column(u'wkb_geometry', String(length=255), primary_key=False),
+	source = Column( String(length=50), nullable=False)
+	
 	airport_code = Column( String(length=10), nullable=False)
 	threshold = Column(String(length=5), nullable=False)
 	
@@ -227,6 +278,10 @@ class Threshold(Base):
 	
 	elevation_m =  Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
 	elevation_ft =  Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
+	
+	displaced_m = Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
+	displaced_ft = Column( Numeric(precision=6, scale=2, asdecimal=True), nullable=True)
+	
 	#Column(u'shoulder', CHAR(length=8, convert_unicode=False, assert_unicode=None, unicode_error=None )),
 	#Column(u'smoothness', NUMERIC(precision=4, scale=2, asdecimal=True)),
 	#Column(u'centerline_lights', NUMERIC(precision=1, scale=0, asdecimal=True)),
@@ -254,18 +309,27 @@ class Threshold(Base):
 				'width_m': str(self.width_m),
 				'true_heading_deg': str(self.true_heading_deg)
 		}
-		"""
-				self.true_heading = None
-		
-		self.lat = None
-		self.lon = None
-		
-				
-		self.elevation_ft = None
-		self.elevation_m = None
-		
-		self.displaced_ft = None
-		self.displaced_m = None
-		"""
 #orm.mapper(RunwayThreshold, t_runway_threhold)
-Index('thresh_apt', Threshold.airport_code, Threshold.threshold)
+Index('thresh_apt', Threshold.source, Threshold.airport_code, Threshold.threshold)
+
+
+
+##===========================================================
+class SysLog(Base):
+	__tablename__ = "syslog"
+		
+	log_id = Column( Integer(), primary_key=True, nullable=False)
+	dated = Column( Date(), nullable=False)
+
+	airport_code = Column( String(length=20), nullable=True)
+	runway = Column( String(length=20), nullable=True)
+	threshold = Column( String(length=20), nullable=True)
+	
+	event =  Column( String(length=20), nullable=False)
+	log =  Column( Text(), nullable=True)
+	
+	#airport_code = Column( String(length=10), nullable=False)
+	#threshold = Column(String(length=5), nullable=False)
+	
+Index('syslog_idx', SysLog.airport_code, SysLog.runway, SysLog.threshold)
+

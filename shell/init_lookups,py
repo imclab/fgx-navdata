@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+import sys
+import os
+
+import shell_conf
+
+from fgx_ajax_server.model import meta, RunwaySurfaces
+
+print "------------------------------"
+print "Initialising lookups"
+print "------------------------------"
+
+
+print "Runway surfaces"
+surfaces = ["Asphalt",	
+			"Concrete",
+			"Grass/Turf",
+			"Dirt",
+			"Gravel",
+			"Dry lakebed",
+			"Water",
+			"Snow/Ice",
+			"Mats",
+			"Other"
+			]
+
+
+
+for surf in surfaces:
+	ob = meta.Session.query(RunwaySurfaces).filter_by(surface = surf).first()
+	if ob == None:
+		print "\t create " + surf
+		ob = RunwaySurfaces()
+		ob.surface = surf
+		meta.Session.add(ob)
+		meta.Session.commit()
+
+
+print " >> Done"

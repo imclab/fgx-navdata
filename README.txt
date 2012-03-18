@@ -1,3 +1,19 @@
+
+This is an idea at consolidating the DATA.
+
+umm
+
+Issues:
+Runway Types:
+
+
+
+
+
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 This file is for you to describe the fgx_ajax_server application. Typically
 you would include information such as the information below:
 

@@ -5,18 +5,25 @@
 
 # Processes runways.csv from ourairports.com
 # 
-
+import sys
 import csv
 
 import shell_conf
-from fgx_ajax_server.model import meta, Runway, Threshold
+from fgx_ajax_server.model import meta, Runway, Threshold, RunwaySurfaces
 from utils import helpers as h
 
 source_file = shell_conf.temp_file("runways.csv")
+source="ourairports"
 
 def run():
+	print "============================="
+	print "== Our Airports - RUNWAYS =="
+	print "============================="
 	c = 0
 	try:
+		
+		runway_surfaces = RunwaySurfaces.reverse_lookup()
+		print runway_surfaces
 		reader = csv.reader(source_file)
 		for row in reader:
 			c += 1
@@ -31,25 +38,105 @@ def run():
 				runway = row[8] + "-" + row[14]
 				if c % 50 == 0:
 					print c, apt_code, runway
-				source="ourairports/runways.csv"
 				
-				rwyOb = meta.Session.query(Runway).filter_by(source=source, airport_code=apt_code, runway=runway).first()
+				#print "------------------"
+				rwyOb = None # meta.Session.query(Runway).filter_by(source=source, airport_code=apt_code, runway=runway).first()
 				if rwyOb == None:
 					rwyOb = Runway()
 					rwyOb.airport_code = apt_code
 					rwyOb.runway = runway
 					rwyOb.source = source 
 					meta.Session.add(rwyOb)
-				
-				rwyOb.length_ft = row[3] if row[3] else None
+					#print "add"
+					pre = None
+				else:
+					pre = rwyOb.dic().copy()
+					#print "update"
+				rwyOb.length_ft = int(row[3]) if row[3] else None
 				rwyOb.width_ft = row[4] if row[4] else None
 				
 				#print row
 				rwyOb.length_m = h.feet_to_metres(row[3]) if rwyOb.length_ft else None
 				rwyOb.width_m = h.feet_to_metres(row[4]) if rwyOb.width_ft else None
 				
-				meta.Session.commit()
 				
+				surf =  str(row[5]).upper().replace("'","")
+				#print surf
+				rwyOb.surface_id = None
+				
+				# Grass
+				if  surf.startswith("GRASS") or \
+					surf.startswith("TURF") or \
+					surf in ["TURF", "GRASS",  "TURF-GRVL", "GRS",
+														"TURF-DIRT", "TURF-GRVL-F", "TURF-DIRT-F", "TURF-GRVL-P",
+														"SOD", "TURF-E", "TURF-DIRT-P"]:
+					rwyOb.surface_id = runway_surfaces["Grass/Turf"]
+					
+				# Asphalt
+				elif surf.startswith("ASPH") or \
+					 surf.startswith("ASPHALT") or \
+					 surf in ["ASP", "BIT", "ASP/TURF", "OLD ASP", "ASFALT", "TAR", "ASPHALT", "PER", "ASB",
+								"BITUMINOUS", "ALPHALT", "ASP/CONC", "ASP/CON"]:
+					rwyOb.surface_id = runway_surfaces["Asphalt"]
+
+				# Concrete
+				elif  surf.startswith("CONC") or \
+					  surf in ["CON", "PAVED", "CONCRETE", "COM", "PEM", "COR", "CON/ASP", "CON/PAD"]:
+					rwyOb.surface_id = runway_surfaces["Concrete"]
+
+				# Dirt
+				elif surf.startswith("DIRT") or \
+					 surf.startswith("CLAY") or \
+					 surf in ["CALICHE", "TRTD-DIRT", "TRTD", "TRTD-DIRT-P", "EARTH", "OILED DIRT", "SOFT SAND",
+								"STONE", "STONE DUST",  "EARTH/TURF", "SAND/CLAY/GRAV", "EARTH/SNOW", "MAC",
+								"NATURAL SOIL, GRASS / SOD", "PACKED DIRT", "NATURAL SOIL", "CLA", "TRTD-DIRT-F"
+								]:
+					
+					rwyOb.surface_id = runway_surfaces["Dirt"]
+					
+				# Gravel	
+				elif surf.startswith("GRVL") or \
+					surf.startswith("GRAVEL") or \
+					surf in [ "GRE", "GVL","GRV",  "LOOSE GRAVEL", "SAN", "SAND/GRVL", "TRTD GRVL", "SND", "GRAV",
+								 "SAND", "GRVL-DIRT-P", "SAND/GRAVEL/AS", "SAND/GRAVEL",  "LAT", "GROUND", "CORAL",
+								 "OILED GRAVEL/T", "OILED GRAVEL", "PACKED GRAVEL", "CRUSHED ROCK", "BITUMEN/GRAVEL",
+								 "SAND-F"
+								]:
+					rwyOb.surface_id = runway_surfaces["Gravel"]
+
+				# Mats
+				elif surf.startswith("MATS") or \
+					surf in ["C", "PSP", "ROOF-TOP", "ROOFTOP", "DECK", "NSTD", "MET", "STEEL-CONC",
+								"ALUM-DECK", "ALUMINUM", "METAL", "STEEL", "PFC", "ALUM", "BRI",
+								"PIERCED STEEL PLANKING / LANDING MATS / MEMBRANES"]:
+					rwyOb.surface_id = runway_surfaces["Mats"]
+
+				# Water
+				elif surf.startswith("WATER"):
+					rwyOb.surface_id = runway_surfaces["Water"]
+
+				# Water
+				elif surf in ["ICE", "ICE - FROZEN LAKE", "SNO"]:
+					rwyOb.surface_id = runway_surfaces["Snow/Ice"]
+					
+				# Other
+				elif surf.startswith("TREATED") or \
+					surf in ["WOOD",  "BRICK", "OIL&CHIP-T-G", "UNK", "COP", "OILED", "U", "UNKNOWN", 
+							"UNPAVED", "CLOSED", "NEOPRENE"]:
+					rwyOb.surface_id = runway_surfaces["Other"]
+					
+				elif surf == "":
+					rwyOb.surface_id = runway_surfaces["Other"]
+					
+				if rwyOb.surface_id == None:
+					print "no surface=", surf,row
+					sys.exit(0)
+					
+				#meta.Session.commit()
+				#print rwyOb.dic()
+				if pre != None:
+					diff = h.diff(pre, rwyOb.dic())
+					#print "diff=", diff 
 				#print row
 				if 1 == 0:
 					thlOb = meta.Session.query(Threshold).filter_by(airport_code=apt_code, threshold=row[8]).first()
@@ -78,7 +165,7 @@ def run():
 				
 				
 				
-			if c == 300:
+			if c == 20:
 				print "stopped"
 				#sys.exit(0)	
 			

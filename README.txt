@@ -1,12 +1,9 @@
-______ _____       ______      _          _____                          
-|  ___|  __ \      |  _  \    | |        /  ___|                         
-| |_  | |  \/_  __ | | | |__ _| |_ __ _  \ `--.  ___ _ ____   _____ _ __ 
-|  _| | | __\ \/ / | | | / _` | __/ _` |  `--. \/ _ \ '__\ \ / / _ \ '__|
-| |   | |_\ \>  <  | |/ / (_| | || (_| | /\__/ /  __/ |   \ V /  __/ |   
-\_|    \____/_/\_\ |___/ \__,_|\__\__,_| \____/ \___|_|    \_/ \___|_|   
-
+FGx-navdata
 
 The intention of this site is to do all the "data calls" and return in various formats.
+And from one preditable space
+
+
 
 
 ==== Introduction ====

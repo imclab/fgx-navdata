@@ -5,21 +5,15 @@
 
 FGx Nav Data for AJAX
 ===============================================
-
-============================
-Introduction
-============================
-.. toctree::
-   :maxdepth: 2
-
-   README
+   
        
 ============================
 FGx API
 ============================
 .. toctree::
    
-  apt
+   airport
+  
       
 ============================
 Credits
@@ -35,6 +29,6 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`v
+* :ref:`search`
 
 
